@@ -43,7 +43,7 @@ export default function ItemDetails({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-sakura-100 text-sakura-700">
-              {selectedItem.isDirectory ? t('folderType') : (selectedItem.extension || 'File')}
+              {selectedItem.isOthers ? t('othersNote') : selectedItem.isDirectory ? t('folderType') : (selectedItem.extension || 'File')}
             </span>
           </div>
           <h3 className="font-bold text-sm text-slate-800 truncate mt-0.5" title={selectedItem.name}>
@@ -89,10 +89,16 @@ export default function ItemDetails({
           className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-sakura-50 text-sakura-700 font-bold text-xs border border-sakura-200 shadow-sm transition-all"
         >
           <ExternalLink className="w-3.5 h-3.5" />
-          <span>{t('revealExplorer')}</span>
+          <span>{selectedItem.isOthers ? t('openFolderExplorer') : t('revealExplorer')}</span>
         </button>
 
-        {confirmTrash ? (
+        {selectedItem.isOthers ? (
+          <div className="p-2.5 rounded-xl bg-sakura-50/80 border border-sakura-100 text-center">
+            <p className="text-[10px] text-sakura-700 font-medium">
+              🌸 {t('othersNote')}
+            </p>
+          </div>
+        ) : confirmTrash ? (
           <div className="bg-rose-50 border border-rose-200 rounded-xl p-3">
             <div className="flex items-center gap-1.5 text-rose-700 font-bold text-xs mb-1">
               <AlertTriangle className="w-4 h-4 text-rose-500" />

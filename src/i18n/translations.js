@@ -62,6 +62,10 @@ export const translations = {
     others: 'Others ({count} items)',
     clickToDrill: '✨ Click to drill down into this folder!',
     sizeLabel: 'Size:',
+    viewInListView: 'Detailed List View 📋',
+    totalItemsSummary: 'Folder contains {count} items totaling {size}',
+    subfoldersCount: 'Subfolders ({count}):',
+    othersNote: 'Collection of smaller files & items',
 
     // List View
     nameAndPath: 'Name & Path ({count} items)',
@@ -79,6 +83,7 @@ export const translations = {
     copied: 'Copied!',
     copy: 'Copy',
     revealExplorer: 'Reveal in File Explorer',
+    openFolderExplorer: 'Open Folder in File Explorer 📂',
     sendRecycleBin: 'Send to Recycle Bin',
     confirmTrashTitle: 'Send to Recycle Bin?',
     confirmTrashDesc: 'This will move the selected item to your Windows Recycle Bin.',
@@ -192,6 +197,10 @@ export const translations = {
     others: 'Mục khác ({count} phần tử)',
     clickToDrill: '✨ Bấm để xem chi tiết bên trong thư mục này!',
     sizeLabel: 'Kích thước:',
+    viewInListView: 'Xem danh sách chi tiết 📋',
+    totalItemsSummary: 'Thư mục chứa {count} mục với tổng dung lượng {size}',
+    subfoldersCount: 'Thư mục con ({count}):',
+    othersNote: 'Tổng hợp các tập tin và mục nhỏ hơn',
 
     // List View
     nameAndPath: 'Tên & Đường dẫn ({count} mục)',
@@ -209,6 +218,7 @@ export const translations = {
     copied: 'Đã chép!',
     copy: 'Sao chép',
     revealExplorer: 'Mở trong File Explorer',
+    openFolderExplorer: 'Mở thư mục trong File Explorer 📂',
     sendRecycleBin: 'Bỏ vào Thùng rác',
     confirmTrashTitle: 'Chuyển vào Thùng rác?',
     confirmTrashDesc: 'Thao tác này sẽ chuyển mục đã chọn vào Thùng rác (Recycle Bin) của Windows.',
@@ -322,6 +332,10 @@ export const translations = {
     others: 'その他（{count} 項目）',
     clickToDrill: '✨ クリックしてこのフォルダを展開！',
     sizeLabel: 'サイズ:',
+    viewInListView: '詳細リストビューで確認 📋',
+    totalItemsSummary: 'フォルダ内に {count} 項目（計 {size}）',
+    subfoldersCount: 'サブフォルダ ({count}):',
+    othersNote: 'その他の小さなファイル・項目群',
 
     // List View
     nameAndPath: '名前とパス（{count} 項目）',
@@ -339,6 +353,7 @@ export const translations = {
     copied: 'コピー完了！',
     copy: 'コピー',
     revealExplorer: 'エクスプローラーで開く',
+    openFolderExplorer: 'フォルダをエクスプローラーで開く 📂',
     sendRecycleBin: 'ごみ箱へ移動',
     confirmTrashTitle: 'ごみ箱へ移動しますか？',
     confirmTrashDesc: '選択した項目をWindowsのごみ箱に移動します。',

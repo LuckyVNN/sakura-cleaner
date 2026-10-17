@@ -11,7 +11,8 @@ export default function PieChart({
   onNavigateUp,
   canNavigateUp,
   onScanDeeper,
-  isDrillLoading
+  isDrillLoading,
+  onSwitchToListView
 }) {
   const { t } = useLanguage();
 
@@ -23,44 +24,48 @@ export default function PieChart({
     const sorted = [...currentNode.children].sort((a, b) => b.value - a.value);
     const total = sorted.reduce((sum, item) => sum + item.value, 0);
 
-    // Limit to top 8 items + 'Others' to keep pie chart clean and 60fps snappy
-    const MAX_SLICES = 8;
-    let slices = [];
-    let othersSum = 0;
-    let othersCount = 0;
+    // Filter out any virtual others to ensure 100% clean real items
+    const realItems = sorted.filter((item) => !item.isOthers);
+    const backendOthers = sorted.filter((item) => item.isOthers);
 
-    sorted.forEach((item, index) => {
-      if (index < MAX_SLICES) {
-        slices.push({
-          name: item.name,
-          value: item.value,
-          itemData: item
-        });
-      } else {
-        othersSum += item.value;
-        othersCount++;
-      }
+    // Limit to top 6 items + 1 single unified 'Others' to keep pie chart clean and 60fps snappy
+    const MAX_SLICES = 6;
+    let slices = [];
+    let topSlicesSum = 0;
+
+    realItems.slice(0, MAX_SLICES).forEach((item) => {
+      slices.push({
+        name: item.name,
+        value: item.value,
+        itemData: item
+      });
+      topSlicesSum += item.value;
     });
 
-    if (othersCount > 0) {
-      const othersLabel = t('others', { count: othersCount });
+    // Unify all remaining items and backend counts into ONE single clean Others slice
+    const totalFolderSize = currentNode.value || total;
+    const unifiedOthersSum = Math.max(0, totalFolderSize - topSlicesSum);
+    const remainingCount = (realItems.length - Math.min(realItems.length, MAX_SLICES)) + backendOthers.reduce((acc, it) => acc + (it.count || 1), 0);
+
+    if (unifiedOthersSum > 0 && remainingCount > 0) {
+      const othersLabel = t('others', { count: remainingCount });
       slices.push({
         name: othersLabel,
-        value: othersSum,
+        value: unifiedOthersSum,
         itemData: {
           name: othersLabel,
-          value: othersSum,
+          value: unifiedOthersSum,
           isDirectory: false,
           isOthers: true,
-          path: `${currentNode.path} (various smaller files)`
+          path: currentNode.path // Real parent folder path on disk
         }
       });
     }
 
     return {
       chartData: slices,
-      rawItems: sorted,
-      totalCurrentSize: total
+      rawItems: realItems,
+      totalCurrentSize: totalFolderSize
     };
   }, [currentNode, t]);
 
@@ -255,46 +260,62 @@ export default function PieChart({
         </div>
       </div>
 
-      {/* Subfolder Clickable Pill Cards */}
-      <div className="w-full mt-2 pt-3 border-t border-sakura-100">
-        <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">
-          {t('subfolderTitle')}
+      {/* Clean Bottom Bar: Summary, Subfolders & Switch to List View */}
+      <div className="w-full mt-2 pt-3 border-t border-sakura-100/80">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1 mb-2">
+          <div className="flex items-center gap-2 text-xs text-sakura-800 font-medium">
+            <span>🌸</span>
+            <span>
+              {t('totalItemsSummary', {
+                count: rawItems.length.toLocaleString(),
+                size: formatBytes(totalCurrentSize)
+              })}
+            </span>
+          </div>
+
+          {onSwitchToListView && (
+            <button
+              onClick={onSwitchToListView}
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sakura-500 to-pink-500 hover:from-sakura-600 hover:to-pink-600 text-white font-bold text-xs shadow-sm hover:shadow-glow-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+              title={t('viewInListView')}
+            >
+              <ListTree className="w-3.5 h-3.5" />
+              <span>{t('viewInListView')}</span>
+              <span>→</span>
+            </button>
+          )}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-1">
-          {rawItems.map((child, index) => {
-            const percent = totalCurrentSize > 0 ? ((child.value / totalCurrentSize) * 100).toFixed(1) : 0;
-            return (
-              <div
-                key={index}
-                onClick={() => {
-                  onSelectItem(child);
-                  if (child.isDirectory) onDrillDown(child);
-                }}
-                className={`p-2 rounded-xl border flex items-center justify-between text-xs cursor-pointer transition-all ${
-                  child.isDirectory
-                    ? 'bg-sakura-50/70 hover:bg-sakura-100 border-sakura-200 text-sakura-900'
-                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
-                }`}
-              >
-                <div className="flex items-center gap-1.5 min-w-0 pr-2">
-                  {child.isDirectory ? (
-                    <Folder className="w-3.5 h-3.5 text-sakura-500 flex-shrink-0" />
-                  ) : (
-                    <FileText className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                  )}
-                  <span className="truncate font-semibold text-[11px]">{child.name}</span>
-                </div>
-                <div className="flex items-center gap-1 flex-shrink-0 font-mono text-[10px]">
-                  <span className="font-bold">{formatBytes(child.value)}</span>
-                  <span className="text-slate-400">({percent}%)</span>
-                  {child.isDirectory && (
-                    <CornerDownRight className="w-3 h-3 text-sakura-400" />
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+
+        {/* If there are direct subfolders, show a compact, clean chip row (directories only) */}
+        {rawItems.filter((i) => i.isDirectory).length > 0 && (
+          <div className="mt-2.5">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 px-1 flex items-center justify-between">
+              <span>{t('subfoldersCount', { count: rawItems.filter((i) => i.isDirectory).length })}</span>
+              <span className="text-[10px] text-sakura-500 font-normal">{t('clickToDrill')}</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1">
+              {rawItems
+                .filter((i) => i.isDirectory)
+                .slice(0, 8)
+                .map((folder, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      onSelectItem(folder);
+                      if (onDrillDown) onDrillDown(folder);
+                    }}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white hover:bg-sakura-100/80 border border-sakura-200 text-sakura-900 text-xs font-semibold shadow-2xs hover:shadow-sm transition-all group"
+                    title={folder.path}
+                  >
+                    <Folder className="w-3 h-3 text-sakura-500 group-hover:scale-110 transition-transform flex-shrink-0" />
+                    <span className="truncate max-w-[120px]">{folder.name}</span>
+                    <span className="text-[10px] text-slate-400 font-mono">({formatBytes(folder.value)})</span>
+                    <CornerDownRight className="w-2.5 h-2.5 text-sakura-400 flex-shrink-0" />
+                  </button>
+                ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

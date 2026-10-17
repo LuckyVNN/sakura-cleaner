@@ -166,32 +166,8 @@ export async function scanDirectoryTree(targetPath, options = {}, onProgress = n
     // Sort children by size descending
     children.sort((a, b) => b.value - a.value);
 
-    // If folder has more than 150 items, keep largest 150 and group remaining to keep UI fast
-    let finalChildren = children;
-    if (children.length > 150) {
-      const topItems = children.slice(0, 150);
-      const remainingItems = children.slice(150);
-      const remainingSize = remainingItems.reduce((acc, it) => acc + (it.value || 0), 0);
-      topItems.push({
-        name: `Other items (${remainingItems.length.toLocaleString()})`,
-        path: `${dirPath} (others)`,
-        value: remainingSize,
-        isDirectory: false,
-        isOthers: true
-      });
-      finalChildren = topItems;
-    }
-
-    // Safety fallback: if folder has size but no child qualified for inclusion, provide summary child
-    if (finalChildren.length === 0 && dirSize > 0) {
-      finalChildren.push({
-        name: 'Files in folder',
-        path: dirPath,
-        value: dirSize,
-        isDirectory: false,
-        isOthers: true
-      });
-    }
+    // Keep top 200 largest real items per folder to keep memory and UI ultra snappy
+    const finalChildren = children.length > 200 ? children.slice(0, 200) : children;
 
     return {
       name: path.basename(dirPath) || dirPath,
@@ -384,11 +360,38 @@ export async function moveToRecycleBin(targetPath) {
 }
 
 /**
- * Open Windows File Explorer and highlight the item
+ * Open Windows File Explorer and highlight the item (or open folder directly)
  */
 export async function revealInExplorer(targetPath) {
-  const sanitizedPath = targetPath.replace(/"/g, '""');
-  await execPromise(`explorer.exe /select,"${sanitizedPath}"`);
+  let cleanPath = targetPath.replace(/ \((others|various smaller files)\)$/, '').trim();
+
+  // If path is "This PC" or empty, open This PC
+  if (!cleanPath || cleanPath === 'This PC') {
+    await execPromise(`explorer.exe ""`);
+    return { success: true };
+  }
+
+  // Walk up if cleanPath doesn't exist on disk
+  while (cleanPath && !fs.existsSync(cleanPath)) {
+    const parent = path.dirname(cleanPath);
+    if (parent === cleanPath) break;
+    cleanPath = parent;
+  }
+
+  if (fs.existsSync(cleanPath)) {
+    try {
+      const stat = fs.statSync(cleanPath);
+      if (stat.isDirectory()) {
+        await execPromise(`explorer.exe "${cleanPath}"`);
+      } else {
+        await execPromise(`explorer.exe /select,"${cleanPath}"`);
+      }
+    } catch (e) {
+      await execPromise(`explorer.exe "${cleanPath}"`);
+    }
+  } else {
+    await execPromise(`explorer.exe "${targetPath}"`);
+  }
   return { success: true };
 }
 

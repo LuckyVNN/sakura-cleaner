@@ -392,6 +392,7 @@ export default function App() {
                     canNavigateUp={nodePath.length > 1}
                     onScanDeeper={scanDeeperFolder}
                     isDrillLoading={isDrillLoading}
+                    onSwitchToListView={() => setViewMode('list')}
                   />
                 )}
                 {viewMode === 'treemap' && (
