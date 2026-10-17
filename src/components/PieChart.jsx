@@ -9,7 +9,9 @@ export default function PieChart({
   onDrillDown,
   onSelectItem,
   onNavigateUp,
-  canNavigateUp
+  canNavigateUp,
+  onScanDeeper,
+  isDrillLoading
 }) {
   const { t } = useLanguage();
 
@@ -153,21 +155,53 @@ export default function PieChart({
   };
 
   if (!currentNode || chartData.length === 0) {
+    if (isDrillLoading) {
+      return (
+        <div className="py-20 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 rounded-2xl bg-sakura-100 text-sakura-500 flex items-center justify-center text-3xl mb-3 animate-spin shadow-glow-pink">
+            🌸
+          </div>
+          <h4 className="font-bold text-sm text-slate-800 font-cute">
+            {t('scanningDeeper', { name: currentNode?.name || '' })}
+          </h4>
+          <p className="text-xs text-sakura-600 mt-1 font-mono">
+            {formatBytes(currentNode?.value || 0)}
+          </p>
+        </div>
+      );
+    }
+
+    const hasValue = (currentNode?.value || 0) > 0;
+
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center">
         <div className="w-16 h-16 rounded-2xl bg-sakura-100 text-sakura-500 flex items-center justify-center text-3xl mb-3 shadow-inner">
           📁
         </div>
         <h4 className="font-bold text-sm text-slate-800 font-cute">
-          {currentNode ? t('noSubfolders', { name: currentNode.name }) : 'No data'}
+          {hasValue
+            ? t('noSubfolders', { name: currentNode?.name || '' })
+            : t('folderEmpty', { name: currentNode?.name || '' })}
         </h4>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-400 mt-1 font-mono">
           {formatBytes(currentNode?.value || 0)}
         </p>
+
+        {/* Scan Deeper button */}
+        {currentNode?.isDirectory && onScanDeeper && (
+          <button
+            onClick={() => onScanDeeper(currentNode)}
+            className="mt-4 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-sakura-500 via-pink-500 to-rose-500 hover:from-sakura-600 hover:to-rose-600 text-white font-bold text-xs shadow-kawaii hover:shadow-glow-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2"
+          >
+            <span>🔍</span>
+            <span>{t('scanDeeperBtn')}</span>
+          </button>
+        )}
+
         {canNavigateUp && (
           <button
             onClick={onNavigateUp}
-            className="mt-4 px-4 py-2 rounded-xl bg-sakura-100 hover:bg-sakura-200 text-sakura-700 font-bold text-xs flex items-center gap-1.5 transition-colors"
+            className="mt-3 px-4 py-2 rounded-xl bg-sakura-100 hover:bg-sakura-200 text-sakura-700 font-bold text-xs flex items-center gap-1.5 transition-colors"
           >
             <ArrowUp className="w-4 h-4" />
             <span>{t('goBackUp')}</span>

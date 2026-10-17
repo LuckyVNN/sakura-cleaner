@@ -28,6 +28,7 @@ export default function App() {
   const [treeData, setTreeData] = useState(null);
   const [nodePath, setNodePath] = useState([]); // Hierarchical drill-down path stack
   const [selectedItem, setSelectedItem] = useState(null);
+  const [isDrillLoading, setIsDrillLoading] = useState(false);
 
   // Active folder is the tip of the nodePath stack
   const activeNode = nodePath.length > 0 ? nodePath[nodePath.length - 1] : null;
@@ -134,7 +135,7 @@ export default function App() {
       const res = await fetch('/api/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: targetPath, maxDepth: 4 })
+        body: JSON.stringify({ path: targetPath, maxDepth: 7 })
       });
       const data = await res.json();
       if (data.success) {
@@ -169,7 +170,7 @@ export default function App() {
       const res = await fetch('/api/scan-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ maxDepth: 4 })
+        body: JSON.stringify({ maxDepth: 7 })
       });
       const data = await res.json();
       if (data.success) {
@@ -190,11 +191,57 @@ export default function App() {
     }
   };
 
+  // Deep scan an individual folder on demand when reaching deep paths
+  const scanDeeperFolder = async (folderNode) => {
+    if (!folderNode || !folderNode.path || folderNode.path === 'This PC') return;
+    setIsDrillLoading(true);
+
+    try {
+      const res = await fetch('/api/scan-folder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: folderNode.path, maxDepth: 6 })
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        const fetchedChildren = data.data.children || [];
+        folderNode.children = fetchedChildren;
+        folderNode.hasMore = false;
+        if (data.data.value && data.data.value > 0) {
+          folderNode.value = data.data.value;
+        }
+
+        setNodePath((prev) => {
+          const next = [...prev];
+          const lastIdx = next.length - 1;
+          if (lastIdx >= 0 && next[lastIdx].path === folderNode.path) {
+            next[lastIdx] = { ...folderNode, children: fetchedChildren, hasMore: false };
+          }
+          return next;
+        });
+
+        setSelectedItem({ ...folderNode, children: fetchedChildren, hasMore: false });
+      } else {
+        showToast(data.error || 'Failed to scan deeper', 'error');
+      }
+    } catch (e) {
+      console.error('Failed to scan deeper', e);
+      showToast('Error exploring folder', 'error');
+    } finally {
+      setIsDrillLoading(false);
+    }
+  };
+
   // Drill down from upper level -> lower level
-  const handleDrillDown = (childFolder) => {
+  const handleDrillDown = async (childFolder) => {
     if (!childFolder.isDirectory) return;
     setNodePath((prev) => [...prev, childFolder]);
     setSelectedItem(childFolder);
+
+    // If folder has no loaded children or hasMore flag, automatically explore deeper!
+    if (!childFolder.children || childFolder.children.length === 0 || childFolder.hasMore) {
+      await scanDeeperFolder(childFolder);
+    }
   };
 
   // Navigate back up one level
@@ -343,6 +390,8 @@ export default function App() {
                     onSelectItem={setSelectedItem}
                     onNavigateUp={handleNavigateUp}
                     canNavigateUp={nodePath.length > 1}
+                    onScanDeeper={scanDeeperFolder}
+                    isDrillLoading={isDrillLoading}
                   />
                 )}
                 {viewMode === 'treemap' && (
@@ -359,6 +408,8 @@ export default function App() {
                     onDrillDown={handleDrillDown}
                     onOpenInExplorer={handleOpenInExplorer}
                     onTrashItem={handleTrashItem}
+                    onScanDeeper={scanDeeperFolder}
+                    isDrillLoading={isDrillLoading}
                   />
                 )}
               </div>

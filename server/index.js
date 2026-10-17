@@ -55,7 +55,7 @@ app.get('/api/drives', async (req, res) => {
 let currentScanActive = false;
 
 app.post('/api/scan', async (req, res) => {
-  const { path: targetPath, maxDepth = 4 } = req.body;
+  const { path: targetPath, maxDepth = 7 } = req.body;
   if (!targetPath) {
     return res.status(400).json({ success: false, error: 'Path is required' });
   }
@@ -103,7 +103,7 @@ app.post('/api/scan', async (req, res) => {
 
 // 2b. Scan ALL PC drives
 app.post('/api/scan-all', async (req, res) => {
-  const { maxDepth = 4 } = req.body;
+  const { maxDepth = 7 } = req.body;
   resetScanCancellation();
   currentScanActive = true;
   broadcast({ type: 'scan_started', targetPath: 'This PC (All Drives)' });
@@ -147,6 +147,29 @@ app.post('/api/scan-cancel', (req, res) => {
   currentScanActive = false;
   broadcast({ type: 'scan_cancelled' });
   res.json({ success: true, message: 'Scan cancelled successfully' });
+});
+
+// 2d. Fast targeted scan of a single folder for deep drill-down exploration
+app.post('/api/scan-folder', async (req, res) => {
+  const { path: targetPath, maxDepth = 6 } = req.body;
+  if (!targetPath) {
+    return res.status(400).json({ success: false, error: 'Path is required' });
+  }
+
+  try {
+    const scanResult = await scanDirectoryTree(targetPath, {
+      maxDepth,
+      minSize: 0 // include all files no matter how small for targeted inspection
+    });
+
+    res.json({
+      success: true,
+      data: scanResult.root,
+      summary: scanResult.summary
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // 3. Reveal in Windows File Explorer

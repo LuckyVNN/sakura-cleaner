@@ -8,14 +8,43 @@ export default function ListView({
   onSelectItem,
   onDrillDown,
   onOpenInExplorer,
-  onTrashItem
+  onTrashItem,
+  onScanDeeper,
+  isDrillLoading
 }) {
   const { t } = useLanguage();
 
-  if (!node || !node.children) {
+  if (!node || !node.children || node.children.length === 0) {
+    if (isDrillLoading) {
+      return (
+        <div className="p-12 text-center flex flex-col items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-sakura-100 text-sakura-500 flex items-center justify-center text-2xl mb-2 animate-spin shadow-glow-pink">
+            🌸
+          </div>
+          <p className="text-xs font-bold text-sakura-700">
+            {t('scanningDeeper', { name: node?.name || '' })}
+          </p>
+        </div>
+      );
+    }
+
     return (
-      <div className="p-8 text-center text-slate-400">
-        No folder contents to display.
+      <div className="p-12 text-center flex flex-col items-center justify-center">
+        <div className="w-12 h-12 rounded-2xl bg-sakura-100 text-sakura-500 flex items-center justify-center text-2xl mb-2">
+          📁
+        </div>
+        <p className="text-xs text-slate-500 font-medium mb-3">
+          {node?.value > 0 ? t('noSubfolders', { name: node?.name || '' }) : t('folderEmpty', { name: node?.name || '' })}
+        </p>
+        {node?.isDirectory && onScanDeeper && (
+          <button
+            onClick={() => onScanDeeper(node)}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-sakura-500 to-pink-500 hover:from-sakura-600 hover:to-pink-600 text-white font-bold text-xs shadow-sm hover:shadow-glow-pink transition-all flex items-center gap-1.5"
+          >
+            <span>🔍</span>
+            <span>{t('scanDeeperBtn')}</span>
+          </button>
+        )}
       </div>
     );
   }

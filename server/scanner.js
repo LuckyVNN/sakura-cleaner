@@ -73,8 +73,8 @@ export function isScanCancelled() {
  * Scan a directory tree up to maxDepth and build a hierarchical JSON tree
  */
 export async function scanDirectoryTree(targetPath, options = {}, onProgress = null) {
-  const maxDepth = options.maxDepth || 4;
-  const minSizeToInclude = options.minSize || 1024 * 512; // 512 KB
+  const maxDepth = options.maxDepth || 7;
+  const minSizeToInclude = options.minSize !== undefined ? options.minSize : (1024 * 64); // 64 KB default
   const startTime = Date.now();
 
   let filesScanned = 0;
@@ -122,23 +122,22 @@ export async function scanDirectoryTree(targetPath, options = {}, onProgress = n
       if (entry.isDirectory()) {
         if (depth < maxDepth) {
           const subDirNode = await crawl(fullPath, depth + 1);
-          if (subDirNode && subDirNode.value > 0) {
+          if (subDirNode && (subDirNode.value > 0 || (subDirNode.children && subDirNode.children.length > 0))) {
             dirSize += subDirNode.value;
             children.push(subDirNode);
           }
         } else {
-          // Beyond max depth, calculate size shallowly or skip deep recursion for speed
+          // Beyond max depth, calculate size shallowly so tree is snappy
           const shallowSize = await getFolderSizeQuick(fullPath);
           dirSize += shallowSize;
-          if (shallowSize >= minSizeToInclude) {
-            children.push({
-              name: entry.name,
-              path: fullPath,
-              value: shallowSize,
-              isDirectory: true,
-              children: []
-            });
-          }
+          children.push({
+            name: entry.name,
+            path: fullPath,
+            value: shallowSize,
+            isDirectory: true,
+            children: [],
+            hasMore: true
+          });
         }
       } else if (entry.isFile()) {
         try {
@@ -148,8 +147,8 @@ export async function scanDirectoryTree(targetPath, options = {}, onProgress = n
           totalBytesScanned += size;
           dirSize += size;
 
-          // Only keep individual files above threshold or if in shallow depth
-          if (size >= minSizeToInclude || depth <= 2) {
+          // Keep individual files above threshold or if in top depths or if minSize is 0
+          if (size >= minSizeToInclude || depth <= 4 || minSizeToInclude === 0) {
             children.push({
               name: entry.name,
               path: fullPath,
@@ -167,12 +166,39 @@ export async function scanDirectoryTree(targetPath, options = {}, onProgress = n
     // Sort children by size descending
     children.sort((a, b) => b.value - a.value);
 
+    // If folder has more than 150 items, keep largest 150 and group remaining to keep UI fast
+    let finalChildren = children;
+    if (children.length > 150) {
+      const topItems = children.slice(0, 150);
+      const remainingItems = children.slice(150);
+      const remainingSize = remainingItems.reduce((acc, it) => acc + (it.value || 0), 0);
+      topItems.push({
+        name: `Other items (${remainingItems.length.toLocaleString()})`,
+        path: `${dirPath} (others)`,
+        value: remainingSize,
+        isDirectory: false,
+        isOthers: true
+      });
+      finalChildren = topItems;
+    }
+
+    // Safety fallback: if folder has size but no child qualified for inclusion, provide summary child
+    if (finalChildren.length === 0 && dirSize > 0) {
+      finalChildren.push({
+        name: 'Files in folder',
+        path: dirPath,
+        value: dirSize,
+        isDirectory: false,
+        isOthers: true
+      });
+    }
+
     return {
       name: path.basename(dirPath) || dirPath,
       path: dirPath,
       value: dirSize,
       isDirectory: true,
-      children
+      children: finalChildren
     };
   }
 
