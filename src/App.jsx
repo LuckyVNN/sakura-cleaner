@@ -375,7 +375,8 @@ export default function App() {
         authorInfo={{
           name: 'Trung Pham (LuckyVNN)',
           bio: 'Creator of Sakura Cleaner 🌸 (✿◡‿◡)',
-          githubUrl: 'https://github.com/LuckyVNN/sakura-cleaner'
+          githubUrl: 'https://github.com/LuckyVNN/sakura-cleaner',
+          releasesUrl: 'https://github.com/LuckyVNN/sakura-cleaner/releases'
         }}
       />
     </div>

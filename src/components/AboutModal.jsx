@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, Heart, MessageCircle, Code, ShieldCheck, User, Github, ExternalLink } from 'lucide-react';
+import { X, Heart, MessageCircle, Code, ShieldCheck, User, Github, Download, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import authorAvatar from '../assets/author-avatar.png';
 import sakuraChanAvatar from '../assets/sakura-chan.png';
@@ -23,6 +23,7 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
   const authorName = authorInfo?.name || 'Trung Pham';
   const authorBio = authorInfo?.bio || 'Creator of Sakura Cleaner 🌸 (✿◡‿◡)';
   const githubUrl = authorInfo?.githubUrl || 'https://github.com/LuckyVNN/sakura-cleaner';
+  const releasesUrl = authorInfo?.releasesUrl || 'https://github.com/LuckyVNN/sakura-cleaner/releases';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-sakura-950/40 backdrop-blur-sm animate-fade-in">
@@ -110,28 +111,60 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
             </div>
           </div>
 
-          {/* Quick Action Link: GitHub Repository (Releases button removed as requested) */}
-          <div>
+          {/* Quick Action Links: GitHub & Releases */}
+          <div className="grid grid-cols-2 gap-2.5">
             <a
               href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+              className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0"
             >
               <Github className="w-4 h-4 text-white" />
               <span>{t('githubRepoBtn')}</span>
-              <ExternalLink className="w-3.5 h-3.5 opacity-60 ml-1" />
+              <ExternalLink className="w-3 h-3 opacity-60 ml-0.5" />
+            </a>
+
+            <a
+              href={releasesUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-sakura-500 to-pink-500 hover:from-sakura-600 hover:to-pink-600 text-white text-xs font-bold shadow-kawaii hover:shadow-glow-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <Download className="w-4 h-4 text-yellow-200" />
+              <span>{t('latestReleasesBtn')}</span>
+              <ExternalLink className="w-3 h-3 opacity-60 ml-0.5" />
             </a>
           </div>
 
-          {/* AMA & Questions Section */}
-          <div className="bg-white/90 p-3.5 rounded-2xl border border-sakura-150 shadow-sm space-y-1">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-sakura-700">
-              <MessageCircle className="w-4 h-4 text-pink-500" />
-              <span>{t('amaTitle')}</span>
+          {/* AMA & Questions Section with Discord link */}
+          <div className="bg-white/90 p-3.5 rounded-2xl border border-sakura-150 shadow-sm space-y-1.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-sakura-700">
+                <MessageCircle className="w-4 h-4 text-pink-500" />
+                <span>{t('amaTitle')}</span>
+              </div>
+              <a
+                href="https://discord.com/users/271958712468373504"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded-lg border border-indigo-200 flex items-center gap-1 transition-all"
+              >
+                <span>Discord</span>
+                <ExternalLink className="w-2.5 h-2.5" />
+              </a>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              {t('amaText')}
+              {t('amaPrefix')}{' '}
+              <a
+                href="https://discord.com/users/271958712468373504"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sakura-600 hover:text-sakura-700 font-bold underline decoration-sakura-300 hover:decoration-sakura-500 transition-colors inline-flex items-center gap-0.5"
+              >
+                <span>{t('amaLinkText')}</span>
+                <ExternalLink className="w-2.5 h-2.5 inline" />
+              </a>
+              {t('amaSuffix')}
             </p>
           </div>
 
