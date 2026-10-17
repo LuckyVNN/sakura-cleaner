@@ -29,7 +29,7 @@
       "target": [
         "portable"
       ],
-      "icon": "build/icon.ico",
+      "icon": "electron/icon.ico",
       "signAndEditExecutable": false
     }
   },

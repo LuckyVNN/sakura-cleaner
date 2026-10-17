@@ -1,10 +1,15 @@
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell, nativeImage } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { startServer } from '../server/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Explicitly set AppUserModelID for Windows Taskbar grouping & icon
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.sakura.cleaner');
+}
 
 // Ensure single instance lock so two copies don't clash
 const gotTheLock = app.requestSingleInstanceLock();
@@ -24,6 +29,10 @@ if (!gotTheLock) {
   });
 
   async function createWindow() {
+    const icoPath = path.join(__dirname, 'icon.ico');
+    const pngPath = path.join(__dirname, 'icon.png');
+    const windowIcon = nativeImage.createFromPath(icoPath);
+
     mainWindow = new BrowserWindow({
       width: 1280,
       height: 860,
@@ -31,7 +40,7 @@ if (!gotTheLock) {
       minHeight: 640,
       title: '🌸 Sakura Cleaner',
       backgroundColor: '#fff0f3',
-      icon: path.join(__dirname, '../public/logo.png'),
+      icon: windowIcon.isEmpty() ? pngPath : icoPath,
       autoHideMenuBar: true,
       webPreferences: {
         nodeIntegration: false,
@@ -39,6 +48,10 @@ if (!gotTheLock) {
         preload: path.join(__dirname, 'preload.cjs')
       }
     });
+
+    if (process.platform === 'win32') {
+      mainWindow.setIcon(icoPath);
+    }
 
     const isDev = process.env.NODE_ENV === 'development' && !app.isPackaged;
 
