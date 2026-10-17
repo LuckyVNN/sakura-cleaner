@@ -373,10 +373,9 @@ export default function App() {
         isOpen={isAboutOpen}
         onClose={() => setIsAboutOpen(false)}
         authorInfo={{
-          name: 'LuckyVNN',
+          name: 'Trung Pham (LuckyVNN)',
           bio: 'Creator of Sakura Cleaner 🌸 (✿◡‿◡)',
-          githubUrl: 'https://github.com/LuckyVNN/sakura-cleaner',
-          releasesUrl: 'https://github.com/LuckyVNN/sakura-cleaner/releases'
+          githubUrl: 'https://github.com/LuckyVNN/sakura-cleaner'
         }}
       />
     </div>

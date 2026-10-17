@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { X, Info, Heart, Sparkles, MessageCircle, Code, ShieldCheck, User, Github, Download, ExternalLink } from 'lucide-react';
+import { X, Heart, MessageCircle, Code, ShieldCheck, User, Github, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import authorAvatar from '../assets/author-avatar.png';
 
 export default function AboutModal({ isOpen, onClose, authorInfo }) {
   const { t } = useLanguage();
@@ -18,10 +19,9 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
 
   if (!isOpen) return null;
 
-  const authorName = authorInfo?.name || t('authorName');
-  const authorBio = authorInfo?.bio || 'Creator of Sakura Cleaner (✿◡‿◡)';
-  const githubUrl = authorInfo?.githubUrl || 'https://github.com';
-  const releasesUrl = authorInfo?.releasesUrl || 'https://github.com';
+  const authorName = authorInfo?.name || 'Trung Pham';
+  const authorBio = authorInfo?.bio || 'Creator of Sakura Cleaner 🌸 (✿◡‿◡)';
+  const githubUrl = authorInfo?.githubUrl || 'https://github.com/LuckyVNN/sakura-cleaner';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-sakura-950/40 backdrop-blur-sm animate-fade-in">
@@ -66,10 +66,14 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
 
         {/* Content Body */}
         <div className="space-y-3.5 relative z-10 max-h-[70vh] overflow-y-auto pr-1">
-          {/* Author Card */}
+          {/* Author Card with User Avatar */}
           <div className="bg-gradient-to-r from-sakura-50/80 via-pink-50/50 to-sakura-50/80 p-4 rounded-2xl border border-sakura-200 shadow-sm flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-sakura-200/70 border border-sakura-300 flex items-center justify-center text-sakura-700 font-bold shadow-sm">
-              <User className="w-6 h-6 text-sakura-600" />
+            <div className="w-13 h-13 rounded-2xl bg-sakura-100 border-2 border-sakura-300 flex items-center justify-center overflow-hidden shadow-sm flex-shrink-0">
+              <img
+                src={authorAvatar}
+                alt={authorName}
+                className="w-12 h-12 object-cover rounded-xl"
+              />
             </div>
             <div className="flex-1 min-w-0">
               <span className="text-[11px] font-bold uppercase tracking-wider text-sakura-500 flex items-center gap-1">
@@ -85,28 +89,17 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
             </div>
           </div>
 
-          {/* Quick Action Links: GitHub & Releases */}
-          <div className="grid grid-cols-2 gap-2.5">
+          {/* Quick Action Link: GitHub Repository (Releases button removed as requested) */}
+          <div>
             <a
               href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0"
             >
               <Github className="w-4 h-4 text-white" />
               <span>{t('githubRepoBtn')}</span>
-              <ExternalLink className="w-3 h-3 opacity-60 ml-0.5" />
-            </a>
-
-            <a
-              href={releasesUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-sakura-500 to-pink-500 hover:from-sakura-600 hover:to-pink-600 text-white text-xs font-bold shadow-kawaii hover:shadow-glow-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0"
-            >
-              <Download className="w-4 h-4 text-yellow-200" />
-              <span>{t('latestReleasesBtn')}</span>
-              <ExternalLink className="w-3 h-3 opacity-60 ml-0.5" />
+              <ExternalLink className="w-3.5 h-3.5 opacity-60 ml-1" />
             </a>
           </div>
 
