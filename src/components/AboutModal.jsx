@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { X, Heart, MessageCircle, Code, ShieldCheck, User, Github, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import authorAvatar from '../assets/author-avatar.png';
-import logoImg from '../assets/logo.png';
 
 export default function AboutModal({ isOpen, onClose, authorInfo }) {
   const { t } = useLanguage();
@@ -38,12 +37,8 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
         {/* Header */}
         <div className="flex items-start justify-between relative z-10 mb-5 pb-4 border-b border-sakura-100">
           <div className="flex items-center gap-3">
-            <div className="w-13 h-13 rounded-2xl overflow-hidden shadow-glow-pink flex-shrink-0 border border-sakura-200">
-              <img
-                src={logoImg}
-                alt="Sakura Cleaner"
-                className="w-full h-full object-cover"
-              />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sakura-400 via-pink-400 to-rose-300 flex items-center justify-center text-2xl shadow-glow-pink flex-shrink-0">
+              🌸
             </div>
             <div>
               <div className="flex items-center gap-2">
