@@ -1,6 +1,9 @@
 # 🌸 Sakura Cleaner (桜クリーナー)
 > **Kawaii PC Disk Space Visualizer & Smart Cleaner** (✿◡‿◡)
 
+[![Download Portable Windows Executable](https://img.shields.io/badge/Download-Sakura%20Cleaner%20v1.0.0%20(Portable%20.exe)-f43f68?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/LuckyVNN/sakura-cleaner/releases/download/v1.0.0/Sakura.Cleaner.1.0.0.exe)
+[![GitHub Releases](https://img.shields.io/github/v/release/LuckyVNN/sakura-cleaner?style=for-the-badge&color=ff8fa3)](https://github.com/LuckyVNN/sakura-cleaner/releases)
+
 A cute, high-performance disk space analyzer and cleaning tool with an interactive Drill-Down Pie Chart, Treemap, Full PC Multi-Drive Scanning, Trilingual support (EN / VN / JP), and safe smart cleaning presets.
 
 ---
