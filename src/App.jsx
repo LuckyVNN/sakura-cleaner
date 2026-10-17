@@ -372,6 +372,12 @@ export default function App() {
       <AboutModal
         isOpen={isAboutOpen}
         onClose={() => setIsAboutOpen(false)}
+        authorInfo={{
+          name: 'LuckyVNN',
+          bio: 'Creator of Sakura Cleaner 🌸 (✿◡‿◡)',
+          githubUrl: 'https://github.com/LuckyVNN/sakura-cleaner',
+          releasesUrl: 'https://github.com/LuckyVNN/sakura-cleaner/releases'
+        }}
       />
     </div>
   );
