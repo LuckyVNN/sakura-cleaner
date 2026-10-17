@@ -55,6 +55,20 @@ export function formatBytes(bytes) {
   return parseFloat((num / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+let activeScanCancelled = false;
+
+export function cancelActiveScan() {
+  activeScanCancelled = true;
+}
+
+export function resetScanCancellation() {
+  activeScanCancelled = false;
+}
+
+export function isScanCancelled() {
+  return activeScanCancelled;
+}
+
 /**
  * Scan a directory tree up to maxDepth and build a hierarchical JSON tree
  */
@@ -66,7 +80,6 @@ export async function scanDirectoryTree(targetPath, options = {}, onProgress = n
   let filesScanned = 0;
   let dirsScanned = 0;
   let totalBytesScanned = 0;
-  let isCancelled = false;
 
   let lastProgressUpdate = 0;
   const notifyProgress = (currentPath) => {
@@ -84,7 +97,7 @@ export async function scanDirectoryTree(targetPath, options = {}, onProgress = n
   };
 
   async function crawl(dirPath, depth) {
-    if (isCancelled) return null;
+    if (activeScanCancelled) return null;
     dirsScanned++;
     notifyProgress(dirPath);
 
@@ -100,6 +113,7 @@ export async function scanDirectoryTree(targetPath, options = {}, onProgress = n
     const children = [];
 
     for (const entry of entries) {
+      if (activeScanCancelled) return null;
       const fullPath = path.join(dirPath, entry.name);
 
       // Skip system junctions or circular links
@@ -166,11 +180,12 @@ export async function scanDirectoryTree(targetPath, options = {}, onProgress = n
   async function getFolderSizeQuick(dirPath, maxQuickDepth = 2) {
     let size = 0;
     async function quickCrawl(p, d) {
+      if (activeScanCancelled) return;
       if (d > maxQuickDepth) return;
       try {
         const list = await fs.promises.readdir(p, { withFileTypes: true });
         for (const item of list) {
-          if (item.isSymbolicLink()) continue;
+          if (activeScanCancelled) return;
           const sub = path.join(p, item.name);
           if (item.isFile()) {
             const st = await fs.promises.stat(sub);
@@ -188,6 +203,21 @@ export async function scanDirectoryTree(targetPath, options = {}, onProgress = n
   }
 
   const rootNode = await crawl(targetPath, 0);
+
+  if (activeScanCancelled) {
+    return {
+      root: null,
+      cancelled: true,
+      summary: {
+        targetPath,
+        filesScanned,
+        dirsScanned,
+        totalBytes: totalBytesScanned,
+        durationMs: Date.now() - startTime,
+        cancelled: true
+      }
+    };
+  }
 
   return {
     root: rootNode,
@@ -221,6 +251,7 @@ export async function scanAllDrives(options = {}, onProgress = null) {
   };
 
   for (let i = 0; i < drives.length; i++) {
+    if (activeScanCancelled) break;
     const drive = drives[i];
     if (onProgress) {
       onProgress({
@@ -254,6 +285,8 @@ export async function scanAllDrives(options = {}, onProgress = null) {
       }
     );
 
+    if (activeScanCancelled) break;
+
     if (driveResult && driveResult.root) {
       driveResult.root.name = drive.name;
       pcRoot.children.push(driveResult.root);
@@ -262,6 +295,22 @@ export async function scanAllDrives(options = {}, onProgress = null) {
       totalDirs += driveResult.summary.dirsScanned;
       totalBytes += driveResult.summary.totalBytes;
     }
+  }
+
+  if (activeScanCancelled) {
+    return {
+      root: null,
+      cancelled: true,
+      summary: {
+        targetPath: 'This PC (All Drives)',
+        drivesCount: drives.length,
+        filesScanned: totalFiles,
+        dirsScanned: totalDirs,
+        totalBytes: totalBytes,
+        durationMs: Date.now() - startTime,
+        cancelled: true
+      }
+    };
   }
 
   // Sort drives by used size descending

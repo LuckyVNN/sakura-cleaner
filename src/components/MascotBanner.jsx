@@ -1,4 +1,5 @@
 import React from 'react';
+import { Square } from 'lucide-react';
 import { formatBytes } from '../utils/formatters';
 import { useLanguage } from '../context/LanguageContext';
 import sakuraChanAvatar from '../assets/sakura-chan.png';
@@ -8,7 +9,8 @@ export default function MascotBanner({
   scanProgress,
   scanSummary,
   selectedItem,
-  selectedDrive
+  selectedDrive,
+  onCancelScan
 }) {
   const { t } = useLanguage();
 
@@ -80,12 +82,25 @@ export default function MascotBanner({
 
         {/* Speech Bubble */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs sm:text-sm font-bold text-sakura-600 font-cute flex items-center gap-1">
-              <span>{t('sakuraChan')}</span>
-              <span className="text-[10px] px-2 py-0.2 rounded-full bg-sakura-100 text-sakura-500 font-normal">Mascot</span>
-            </span>
-            <span className="text-xs text-sakura-400 font-mono">{kaomoji}</span>
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs sm:text-sm font-bold text-sakura-600 font-cute flex items-center gap-1">
+                <span>{t('sakuraChan')}</span>
+                <span className="text-[10px] px-2 py-0.2 rounded-full bg-sakura-100 text-sakura-500 font-normal">Mascot</span>
+              </span>
+              <span className="text-xs text-sakura-400 font-mono">{kaomoji}</span>
+            </div>
+
+            {isScanning && onCancelScan && (
+              <button
+                onClick={onCancelScan}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold text-xs shadow-sm hover:shadow-glow-pink transition-all flex-shrink-0 active:scale-95 animate-pulse"
+                title={t('cancelScan')}
+              >
+                <Square className="w-3 h-3 fill-white" />
+                <span>{t('cancelScan')}</span>
+              </button>
+            )}
           </div>
           <p className="text-xs sm:text-sm font-medium text-slate-700 truncate leading-relaxed">
             {speech}

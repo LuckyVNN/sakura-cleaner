@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, nativeImage } from 'electron';
+import { app, BrowserWindow, shell, nativeImage, dialog, ipcMain } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { startServer } from '../server/index.js';
@@ -17,6 +17,37 @@ const gotTheLock = app.requestSingleInstanceLock();
 let mainWindow = null;
 let serverPort = 3001;
 let serverInstance = null;
+let isScanningActive = false;
+let currentLanguage = 'en';
+
+ipcMain.on('set-scanning-status', (event, { isScanning, lang }) => {
+  isScanningActive = !!isScanning;
+  if (lang) currentLanguage = lang;
+});
+
+const closeConfirmDialogs = {
+  en: {
+    title: '🌸 Sakura Cleaner - Scan in Progress',
+    message: 'A disk scan is currently running!',
+    detail: 'Are you sure you want to close Sakura Cleaner? Closing now will cancel the active scan.',
+    stayBtn: '🌸 Keep Scanning',
+    exitBtn: '🛑 Exit App & Abort'
+  },
+  vi: {
+    title: '🌸 Sakura Cleaner - Đang quét ổ đĩa',
+    message: 'Tiến trình quét ổ đĩa đang được thực hiện!',
+    detail: 'Bạn có chắc chắn muốn đóng Sakura Cleaner không? Việc đóng ứng dụng sẽ dừng tiến trình quét này.',
+    stayBtn: '🌸 Tiếp tục quét',
+    exitBtn: '🛑 Thoát ứng dụng'
+  },
+  ja: {
+    title: '🌸 Sakura Cleaner - スキャン実行中',
+    message: 'ディスクスキャンが現在実行中です！',
+    detail: 'Sakura Cleaner を終了してもよろしいですか？終了すると現在のスキャンは中止されます。',
+    stayBtn: '🌸 スキャンを続ける',
+    exitBtn: '🛑 終了して中止する'
+  }
+};
 
 if (!gotTheLock) {
   app.quit();
@@ -64,6 +95,34 @@ if (!gotTheLock) {
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);
       return { action: 'deny' };
+    });
+
+    let isForceClosing = false;
+
+    mainWindow.on('close', (e) => {
+      if (isForceClosing) return;
+
+      if (isScanningActive) {
+        e.preventDefault();
+        const texts = closeConfirmDialogs[currentLanguage] || closeConfirmDialogs.en;
+        const choice = dialog.showMessageBoxSync(mainWindow, {
+          type: 'warning',
+          buttons: [texts.stayBtn, texts.exitBtn],
+          defaultId: 0,
+          cancelId: 0,
+          title: texts.title,
+          message: texts.message,
+          detail: texts.detail,
+          icon: windowIcon.isEmpty() ? undefined : windowIcon,
+          noLink: true
+        });
+
+        if (choice === 1) {
+          isScanningActive = false;
+          isForceClosing = true;
+          mainWindow.destroy();
+        }
+      }
     });
 
     mainWindow.on('closed', () => {

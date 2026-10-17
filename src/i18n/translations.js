@@ -43,6 +43,7 @@ export const translations = {
     scanningTitle: 'Scanning your hard drive...',
     analyzingFolders: 'Analyzing folders & file structures',
     filesFoundSoFar: '{count} files found',
+    cancelScan: 'Cancel Scan ⏹️',
 
     // Breadcrumbs
     root: 'Root',
@@ -99,6 +100,7 @@ export const translations = {
 
     // Toasts
     scanCompletedToast: 'Scan complete! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧',
+    scanCancelledToast: 'Scan was cancelled 🛑',
     openedExplorerToast: 'Opened in File Explorer 📂',
     sentToTrashToast: 'Sent "{name}" to Recycle Bin 🗑️',
     cleanSuccessToast: 'Smart Clean complete! 🎉',
@@ -168,6 +170,7 @@ export const translations = {
     scanningTitle: 'Đang quét ổ đĩa máy tính...',
     analyzingFolders: 'Đang phân tích cấu trúc thư mục & tập tin',
     filesFoundSoFar: 'Đã tìm thấy {count} tập tin',
+    cancelScan: 'Hủy quét ⏹️',
 
     // Breadcrumbs
     root: 'Gốc',
@@ -224,6 +227,7 @@ export const translations = {
 
     // Toasts
     scanCompletedToast: 'Quét hoàn tất! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧',
+    scanCancelledToast: 'Đã hủy tiến trình quét 🛑',
     openedExplorerToast: 'Đã mở trong File Explorer 📂',
     sentToTrashToast: 'Đã chuyển "{name}" vào Thùng rác 🗑️',
     cleanSuccessToast: 'Dọn dẹp thông minh hoàn tất! 🎉',
@@ -293,6 +297,7 @@ export const translations = {
     scanningTitle: 'ハードディスクをスキャン中...',
     analyzingFolders: 'フォルダとファイル構造を分析しています',
     filesFoundSoFar: '{count} 個のファイルを発見',
+    cancelScan: 'スキャン中止 ⏹️',
 
     // Breadcrumbs
     root: 'ルート',
@@ -349,6 +354,7 @@ export const translations = {
 
     // Toasts
     scanCompletedToast: 'スキャン完了！(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧',
+    scanCancelledToast: 'スキャンを中止しました 🛑',
     openedExplorerToast: 'エクスプローラーで表示しました 📂',
     sentToTrashToast: '「{name}」をごみ箱へ移動しました 🗑️',
     cleanSuccessToast: 'スマートクリーン完了！🎉',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { HardDrive, Search, AlertCircle, Zap } from 'lucide-react';
+import { HardDrive, Search, AlertCircle, Zap, Square } from 'lucide-react';
 import { formatBytes } from '../utils/formatters';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -9,6 +9,7 @@ export default function DriveSelector({
   onSelectDrive,
   onStartScan,
   onStartScanAll,
+  onCancelScan,
   isScanning,
   isFullPCActive
 }) {
@@ -37,19 +38,33 @@ export default function DriveSelector({
           </span>
         </div>
 
-        {/* ⚡ Full PC Scan Button */}
-        <button
-          onClick={onStartScanAll}
-          disabled={isScanning}
-          className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-bold text-xs transition-all shadow-kawaii transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 ${
-            isFullPCActive
-              ? 'bg-gradient-to-r from-sakura-600 via-pink-600 to-rose-600 text-white ring-2 ring-sakura-400 shadow-glow-pink'
-              : 'bg-gradient-to-r from-sakura-500 via-pink-500 to-rose-500 hover:from-sakura-600 hover:to-rose-600 text-white hover:shadow-glow-pink'
-          }`}
-        >
-          <Zap className="w-4 h-4 text-yellow-200 fill-yellow-200 animate-pulse" />
-          <span>{t('fullScanBtn')}</span>
-        </button>
+        {/* Action Buttons: Full Scan & Cancel Scan */}
+        <div className="flex items-center gap-2">
+          {isScanning && onCancelScan && (
+            <button
+              onClick={onCancelScan}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-bold text-xs transition-all shadow-kawaii bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white shadow-glow-pink animate-pulse transform hover:-translate-y-0.5 active:translate-y-0"
+              title={t('cancelScan')}
+            >
+              <Square className="w-3.5 h-3.5 fill-white" />
+              <span>{t('cancelScan')}</span>
+            </button>
+          )}
+
+          {/* ⚡ Full PC Scan Button */}
+          <button
+            onClick={onStartScanAll}
+            disabled={isScanning}
+            className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-bold text-xs transition-all shadow-kawaii transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 ${
+              isFullPCActive
+                ? 'bg-gradient-to-r from-sakura-600 via-pink-600 to-rose-600 text-white ring-2 ring-sakura-400 shadow-glow-pink'
+                : 'bg-gradient-to-r from-sakura-500 via-pink-500 to-rose-500 hover:from-sakura-600 hover:to-rose-600 text-white hover:shadow-glow-pink'
+            }`}
+          >
+            <Zap className="w-4 h-4 text-yellow-200 fill-yellow-200 animate-pulse" />
+            <span>{t('fullScanBtn')}</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">

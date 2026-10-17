@@ -6,6 +6,8 @@ import {
   getWindowsDrives,
   scanDirectoryTree,
   scanAllDrives,
+  cancelActiveScan,
+  resetScanCancellation,
   moveToRecycleBin,
   revealInExplorer,
   scanSmartJunk,
@@ -58,6 +60,7 @@ app.post('/api/scan', async (req, res) => {
     return res.status(400).json({ success: false, error: 'Path is required' });
   }
 
+  resetScanCancellation();
   currentScanActive = true;
   broadcast({ type: 'scan_started', targetPath });
 
@@ -74,6 +77,16 @@ app.post('/api/scan', async (req, res) => {
     );
 
     currentScanActive = false;
+
+    if (scanResult.cancelled) {
+      broadcast({ type: 'scan_cancelled' });
+      return res.json({
+        success: false,
+        cancelled: true,
+        message: 'Scan was cancelled'
+      });
+    }
+
     broadcast({ type: 'scan_completed', summary: scanResult.summary });
 
     res.json({
@@ -91,6 +104,7 @@ app.post('/api/scan', async (req, res) => {
 // 2b. Scan ALL PC drives
 app.post('/api/scan-all', async (req, res) => {
   const { maxDepth = 4 } = req.body;
+  resetScanCancellation();
   currentScanActive = true;
   broadcast({ type: 'scan_started', targetPath: 'This PC (All Drives)' });
 
@@ -103,6 +117,16 @@ app.post('/api/scan-all', async (req, res) => {
     });
 
     currentScanActive = false;
+
+    if (scanResult.cancelled) {
+      broadcast({ type: 'scan_cancelled' });
+      return res.json({
+        success: false,
+        cancelled: true,
+        message: 'Scan was cancelled'
+      });
+    }
+
     broadcast({ type: 'scan_completed', summary: scanResult.summary });
 
     res.json({
@@ -115,6 +139,14 @@ app.post('/api/scan-all', async (req, res) => {
     broadcast({ type: 'scan_error', error: err.message });
     res.status(500).json({ success: false, error: err.message });
   }
+});
+
+// 2c. Cancel active scan
+app.post('/api/scan-cancel', (req, res) => {
+  cancelActiveScan();
+  currentScanActive = false;
+  broadcast({ type: 'scan_cancelled' });
+  res.json({ success: true, message: 'Scan cancelled successfully' });
 });
 
 // 3. Reveal in Windows File Explorer

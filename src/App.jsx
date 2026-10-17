@@ -9,11 +9,12 @@ import ListView from './components/ListView';
 import ItemDetails from './components/ItemDetails';
 import SmartCleanModal from './components/SmartCleanModal';
 import AboutModal from './components/AboutModal';
+import { Square } from 'lucide-react';
 import { formatBytes } from './utils/formatters';
 import { useLanguage } from './context/LanguageContext';
 
 export default function App() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [drives, setDrives] = useState([]);
   const [selectedDrive, setSelectedDrive] = useState(null);
   const [isFullPCActive, setIsFullPCActive] = useState(false);
@@ -39,6 +40,26 @@ export default function App() {
     setTimeout(() => setToast(null), 3500);
   };
 
+  // Sync scanning status and current language to Electron for close confirmation
+  useEffect(() => {
+    if (window.electronAPI?.setScanningStatus) {
+      window.electronAPI.setScanningStatus(isScanning, lang);
+    }
+  }, [isScanning, lang]);
+
+  // Prevent accidental tab/browser close when scanning
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isScanning) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isScanning]);
+
   // Connect WebSocket for live scan updates
   useEffect(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -54,6 +75,9 @@ export default function App() {
           setIsScanning(false);
           setScanSummary(msg.summary);
           showToast(t('scanCompletedToast'), 'success');
+        } else if (msg.type === 'scan_cancelled') {
+          setIsScanning(false);
+          showToast(t('scanCancelledToast'), 'info');
         } else if (msg.type === 'scan_error') {
           setIsScanning(false);
           showToast(t('errorToast', { msg: msg.error }), 'error');
@@ -87,6 +111,15 @@ export default function App() {
     fetchDrives();
   }, []);
 
+  // Cancel ongoing scan
+  const handleCancelScan = async () => {
+    try {
+      await fetch('/api/scan-cancel', { method: 'POST' });
+    } catch (e) {
+      console.error('Failed to cancel scan', e);
+    }
+  };
+
   // Start single drive scanning
   const handleStartScan = async (targetPath) => {
     setIsScanning(true);
@@ -109,6 +142,8 @@ export default function App() {
         setNodePath([data.data]);
         setSelectedItem(data.data);
         setScanSummary(data.summary);
+      } else if (data.cancelled) {
+        showToast(t('scanCancelledToast'), 'info');
       } else {
         showToast(data.error || 'Scan failed', 'error');
       }
@@ -142,6 +177,8 @@ export default function App() {
         setNodePath([data.data]);
         setSelectedItem(data.data);
         setScanSummary(data.summary);
+      } else if (data.cancelled) {
+        showToast(t('scanCancelledToast'), 'info');
       } else {
         showToast(data.error || 'Full scan failed', 'error');
       }
@@ -243,6 +280,7 @@ export default function App() {
         scanSummary={scanSummary}
         selectedItem={selectedItem}
         selectedDrive={selectedDrive}
+        onCancelScan={handleCancelScan}
       />
 
       {/* Hard Drives Selector */}
@@ -255,6 +293,7 @@ export default function App() {
         }}
         onStartScan={handleStartScan}
         onStartScanAll={handleStartScanAll}
+        onCancelScan={handleCancelScan}
         isScanning={isScanning}
         isFullPCActive={isFullPCActive}
       />
@@ -287,6 +326,13 @@ export default function App() {
                 <div className="mt-3 text-xs font-mono text-slate-400">
                   {t('filesFoundSoFar', { count: scanProgress?.filesScanned?.toLocaleString() || 0 })}
                 </div>
+                <button
+                  onClick={handleCancelScan}
+                  className="mt-6 flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold text-xs shadow-kawaii hover:shadow-glow-pink transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  <Square className="w-3.5 h-3.5 fill-white" />
+                  <span>{t('cancelScan')}</span>
+                </button>
               </div>
             ) : treeData ? (
               <div>
