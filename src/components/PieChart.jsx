@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
-import { Folder, ArrowUp, CornerDownRight, FileText } from 'lucide-react';
+import { Folder, ArrowUp, CornerDownRight, FileText, ListTree } from 'lucide-react';
 import { formatBytes, kawaiiPalette } from '../utils/formatters';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -119,8 +119,9 @@ export default function PieChart({
           label: {
             show: true,
             formatter: (params) => {
-              const name = params.name.length > 14 ? params.name.slice(0, 12) + '…' : params.name;
-              return `${name}\n${params.percent}%`;
+              const safeName = params?.name || '';
+              const name = safeName.length > 14 ? safeName.slice(0, 12) + '…' : safeName;
+              return `${name}\n${params?.percent ?? 0}%`;
             },
             fontSize: 11,
             fontWeight: 'bold',
@@ -267,8 +268,8 @@ export default function PieChart({
             <span>🌸</span>
             <span>
               {t('totalItemsSummary', {
-                count: rawItems.length.toLocaleString(),
-                size: formatBytes(totalCurrentSize)
+                count: (rawItems || []).length.toLocaleString(),
+                size: formatBytes(totalCurrentSize || 0)
               })}
             </span>
           </div>
