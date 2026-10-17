@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Nunito', sans-serif;
+  overflow-x: hidden;
+  background: radial-gradient(circle at top right, #fff0f3 0%, #fce7f3 40%, #ffe4e6 100%);
+}
+
+h1, h2, h3, .font-cute {
+  font-family: 'Comfortaa', cursive, sans-serif;
+}
+
+/* Cute Pastel Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #ffe3e8;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb {
+  background: #fea3b4;
+  border-radius: 9999px;
+  border: 2px solid #ffe3e8;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #fd6b88;
+}
+
+/* Glassmorphism cute panel */
+.kawaii-glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(254, 205, 214, 0.6);
+}
+
+.kawaii-glass-dark {
+  background: rgba(30, 20, 35, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(244, 63, 104, 0.3);
+}
+
+/* Sparkle glow */
+.sparkle-glow {
+  filter: drop-shadow(0 0 8px rgba(253, 107, 136, 0.5));
+}

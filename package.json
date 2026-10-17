@@ -1,0 +1,65 @@
+{
+  "name": "sakura-cleaner",
+  "version": "1.0.0",
+  "description": "Cute Pink Kawaii PC Disk Space Visualizer & Smart Cleaner",
+  "main": "electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev:server": "node server/index.js",
+    "dev:client": "vite",
+    "dev": "concurrently -k -n \"SERVER,CLIENT\" -c \"magenta,pink\" \"node server/index.js\" \"vite\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron": "electron .",
+    "pack:exe": "vite build && electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.sakura.cleaner",
+    "productName": "Sakura Cleaner",
+    "directories": {
+      "output": "dist_exe"
+    },
+    "files": [
+      "dist/**/*",
+      "server/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "signAndEditExecutable": false
+    }
+  },
+  "keywords": [
+    "disk-cleaner",
+    "visualizer",
+    "treemap",
+    "pie-chart",
+    "sakura",
+    "kawaii"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "echarts": "^5.5.1",
+    "echarts-for-react": "^3.0.2",
+    "express": "^4.21.1",
+    "lucide-react": "^0.453.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.0.1",
+    "electron": "^33.0.2",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "vite": "^5.4.9"
+  }
+}
