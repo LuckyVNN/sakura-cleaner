@@ -1,16 +1,19 @@
 # 🌸 Sakura Cleaner (桜クリーナー)
 > **Kawaii PC Disk Space Visualizer & Smart Cleaner** (✿◡‿◡)
 
-[![Download Portable Windows Executable](https://img.shields.io/badge/Download-Sakura%20Cleaner%20v1.0.0%20(Portable%20.exe)-f43f68?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/LuckyVNN/sakura-cleaner/releases/download/v1.0.0/Sakura.Cleaner.1.0.0.exe)
+[![Download Portable Windows Executable](https://img.shields.io/badge/Download-Sakura%20Cleaner%20v2.0%20(Portable%20.exe)-f43f68?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/LuckyVNN/sakura-cleaner/releases/download/v2.0.0/Sakura.Cleaner.2.0.0.exe)
 [![GitHub Releases](https://img.shields.io/github/v/release/LuckyVNN/sakura-cleaner?style=for-the-badge&color=ff8fa3)](https://github.com/LuckyVNN/sakura-cleaner/releases)
 
-A cute, high-performance disk space analyzer and cleaning tool with an interactive Drill-Down Pie Chart, Treemap, Full PC Multi-Drive Scanning, Trilingual support (EN / VN / JP), and safe smart cleaning presets.
+A cute, high-performance disk space analyzer and cleaning tool with an interactive Drill-Down Pie Chart, Treemap, Full PC Multi-Drive Scanning, Trilingual support (EN / VN / JP), Sakura-chan chibi anime mascot, and safe smart cleaning presets.
 
 ---
 
 ## ✨ Features
 
-- **🌸 Cute Pink / Anime UI/UX**: Soft sakura pastels (`#fff0f3`, `#ffe3e8`, `#f43f68`), glassmorphism cards, glowing badges, custom pastel scrollbars, and reactive chibi mascot reactions (`(◕‿◕)`, `(ง •̀_•́)ง`, `(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧`).
+- **🌸 Sakura-chan Chibi Mascot & Anime Aesthetic (v2.0)**:
+  - Introducing **Sakura-chan (桜ちゃん)**, your official anime maid mascot holding her fluffy cleaning duster!
+  - Reactive emotion badges (`🌸` greeting, `🧹` sweeping, `👀` monster folders, `💖` celebration).
+  - Soft sakura pastels (`#fff0f3`, `#ffe3e8`, `#f43f68`), glassmorphism cards, glowing badges, and custom pastel scrollbars.
 - **🥧 Interactive Fraction Drill-Down Pie Chart**:
   - High-performance Donut/Pie Chart powered by Apache ECharts (60 FPS).
   - Displays top 8 largest items + "Others" slice. Click any slice to drill down into subfolders smoothly.
@@ -58,7 +61,7 @@ npm run pack:exe
 ```
 
 The resulting executable will be generated at:
-`dist_exe/Sakura Cleaner 1.0.0.exe` (Portable single-file executable, ~78 MB)
+`dist_exe/Sakura Cleaner 2.0.0.exe` (Portable single-file executable, ~82 MB)
 
 ---
 

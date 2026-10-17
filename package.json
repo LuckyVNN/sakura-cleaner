@@ -1,6 +1,6 @@
 {
   "name": "sakura-cleaner",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Cute Pink Kawaii PC Disk Space Visualizer & Smart Cleaner",
   "main": "electron/main.js",
   "type": "module",

@@ -2,7 +2,7 @@ export const translations = {
   en: {
     appName: 'Sakura Cleaner',
     appSubtitle: 'Kawaii PC Disk Visualizer & Smart Cleaner (✿◡‿◡)',
-    version: 'v1.0 ✨',
+    version: 'v2.0 🌸✨',
     
     // View Modes
     pieChart: 'Pie Chart 🥧',
@@ -124,7 +124,7 @@ export const translations = {
   vi: {
     appName: 'Sakura Cleaner',
     appSubtitle: 'Trình trực quan hóa & dọn dẹp ổ đĩa siêu dễ thương (✿◡‿◡)',
-    version: 'v1.0 ✨',
+    version: 'v2.0 🌸✨',
     
     // View Modes
     pieChart: 'Biểu đồ tròn 🥧',
@@ -246,7 +246,7 @@ export const translations = {
   ja: {
     appName: 'Sakura Cleaner',
     appSubtitle: 'かわいいPCディスク可視化＆スマートクリーナー (✿◡‿◡)',
-    version: 'v1.0 ✨',
+    version: 'v2.0 🌸✨',
     
     // View Modes
     pieChart: '円グラフ 🥧',

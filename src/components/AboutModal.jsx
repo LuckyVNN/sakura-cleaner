@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { X, Heart, MessageCircle, Code, ShieldCheck, User, Github, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import authorAvatar from '../assets/author-avatar.png';
+import sakuraChanAvatar from '../assets/sakura-chan.png';
 
 export default function AboutModal({ isOpen, onClose, authorInfo }) {
   const { t } = useLanguage();
@@ -86,6 +87,26 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
               <div className="text-xs text-sakura-700 truncate mt-0.5">
                 {authorBio}
               </div>
+            </div>
+          </div>
+
+          {/* Sakura-chan Official Mascot Card */}
+          <div className="bg-sakura-50/80 p-3 rounded-2xl border border-sakura-200 flex items-center gap-3 shadow-sm">
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-sakura-300 flex-shrink-0 shadow-sm">
+              <img
+                src={sakuraChanAvatar}
+                alt="Sakura-chan"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold text-sakura-700">Sakura-chan (桜ちゃん)</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-sakura-200 text-sakura-800 font-semibold">Mascot</span>
+              </div>
+              <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">
+                Your cheerful anime maid companion, keeping your storage sparkling clean! (✿◠‿◠)
+              </p>
             </div>
           </div>
 
