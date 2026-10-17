@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { X, Heart, MessageCircle, Code, ShieldCheck, User, Github, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import authorAvatar from '../assets/author-avatar.png';
+import logoImg from '../assets/logo.png';
 
 export default function AboutModal({ isOpen, onClose, authorInfo }) {
   const { t } = useLanguage();
@@ -37,8 +38,12 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
         {/* Header */}
         <div className="flex items-start justify-between relative z-10 mb-5 pb-4 border-b border-sakura-100">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sakura-400 via-pink-400 to-rose-300 flex items-center justify-center text-2xl shadow-glow-pink">
-              🌸
+            <div className="w-13 h-13 rounded-2xl overflow-hidden shadow-glow-pink flex-shrink-0 border border-sakura-200">
+              <img
+                src={logoImg}
+                alt="Sakura Cleaner"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -67,12 +72,12 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
         {/* Content Body */}
         <div className="space-y-3.5 relative z-10 max-h-[70vh] overflow-y-auto pr-1">
           {/* Author Card with User Avatar */}
-          <div className="bg-gradient-to-r from-sakura-50/80 via-pink-50/50 to-sakura-50/80 p-4 rounded-2xl border border-sakura-200 shadow-sm flex items-center gap-3.5">
-            <div className="w-13 h-13 rounded-2xl bg-sakura-100 border-2 border-sakura-300 flex items-center justify-center overflow-hidden shadow-sm flex-shrink-0">
+          <div className="bg-gradient-to-r from-sakura-50/80 via-pink-50/50 to-sakura-50/80 p-4 rounded-2xl border border-sakura-200 shadow-sm flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl p-0.5 bg-gradient-to-tr from-sakura-400 to-pink-300 shadow-md flex-shrink-0">
               <img
                 src={authorAvatar}
                 alt={authorName}
-                className="w-12 h-12 object-cover rounded-xl"
+                className="w-full h-full object-cover rounded-[14px]"
               />
             </div>
             <div className="flex-1 min-w-0">
@@ -80,10 +85,10 @@ export default function AboutModal({ isOpen, onClose, authorInfo }) {
                 <Heart className="w-3 h-3 text-sakura-500 fill-sakura-400" />
                 {t('authorTitle')}
               </span>
-              <div className="text-sm font-bold text-gray-800 truncate">
+              <div className="text-base font-bold text-gray-800 truncate">
                 {authorName}
               </div>
-              <div className="text-xs text-sakura-700 truncate">
+              <div className="text-xs text-sakura-700 truncate mt-0.5">
                 {authorBio}
               </div>
             </div>

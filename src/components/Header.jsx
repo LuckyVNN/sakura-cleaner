@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Sparkles, RefreshCw, PieChart, LayoutGrid, ListTree, Globe, Info, ChevronDown, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import logoImg from '../assets/logo.png';
 
 export default function Header({
   viewMode,
@@ -32,8 +33,12 @@ export default function Header({
       <div className="flex flex-wrap items-center justify-between gap-4">
         {/* Brand Logo & Title */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sakura-400 to-pink-300 flex items-center justify-center text-2xl shadow-glow-pink animate-float">
-            🌸
+          <div className="w-13 h-13 rounded-2xl overflow-hidden shadow-glow-pink animate-float flex-shrink-0 border-2 border-sakura-200">
+            <img
+              src={logoImg}
+              alt="Sakura Cleaner"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">

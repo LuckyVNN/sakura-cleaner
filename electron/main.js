@@ -31,6 +31,7 @@ if (!gotTheLock) {
       minHeight: 640,
       title: '🌸 Sakura Cleaner',
       backgroundColor: '#fff0f3',
+      icon: path.join(__dirname, '../public/logo.png'),
       autoHideMenuBar: true,
       webPreferences: {
         nodeIntegration: false,
